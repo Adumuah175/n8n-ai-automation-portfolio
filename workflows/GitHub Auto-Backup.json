@@ -1,0 +1,86 @@
+{
+  "id": "nyD094kQmXAoqLqB",
+  "name": "GitHub Auto-Backup",
+  "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-11-18T20:50:05.235Z",
+  "updatedAt": "2026-11-18T20:54:44.463Z",
+  "isArchived": false,
+  "versionId": "46d1ddf3-9f9e-4311-8e60-91c7e876b4bf",
+  "triggerCount": 0,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtMinute": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a081b4f6-2961-40e7-9194-c99f7b1382ed",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "filters": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "5ebbe24d-64cf-4a1a-87dd-06013ae5c76d",
+      "name": "Get many workflows",
+      "credentials": {
+        "n8nApi": {
+          "id": "rGcQlUjmDKI44LTa",
+          "name": "n8n account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get many workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodeGroups": [],
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": [],
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "nyD094kQmXAoqLqB",
+      "projectId": "lYKvtadRl3YmmyVi",
+      "createdAt": "2026-11-18T20:50:05.241Z",
+      "updatedAt": "2026-11-18T20:50:05.241Z"
+    }
+  ],
+  "activeVersion": null
+}
