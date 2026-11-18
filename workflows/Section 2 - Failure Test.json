@@ -1,0 +1,205 @@
+{
+  "id": "Zeyv2YYDd8WmqfLk",
+  "name": "Section 2 - Failure Test",
+  "active": true,
+  "activeVersionId": "fad10cbb-ec42-4a16-bc91-4ca004ae194c",
+  "createdAt": "2026-11-16T18:40:49.696Z",
+  "updatedAt": "2026-11-17T16:19:27.576Z",
+  "isArchived": false,
+  "versionId": "6b878e97-52ec-4075-8112-fc37691742cb",
+  "triggerCount": 1,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "course/n8n103/failure-test",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        -48,
+        0
+      ],
+      "id": "26a1f7a2-07c4-453d-96e6-f0b98c6cd28e",
+      "name": "TriggerWebhook",
+      "webhookId": "2208c8ed-f06a-489b-90cc-721f53ff0a14",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "DYhWrYzLozavqgS5",
+          "name": "n8n Academy API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://learn.app.n8n.cloud/webhook/course/n8n103/guaranteed-failure",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": " X-Assessment-ID",
+              "value": "fb0c336524757573f38b3960fa32c9e8"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        176,
+        0
+      ],
+      "id": "6a8260c6-8357-4883-b3de-1d4ac03a694a",
+      "name": "CallFailingEndpoint",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "DYhWrYzLozavqgS5",
+          "name": "n8n Academy API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Section 2 - Failure Test\n\nOwned By: Adumuah Clifford\nLast Updated: 17/11/26\n\nWebhook workflow that intentionally fails to test error workflow\ntriggering. Called by the main Debugging Practice workflow.\n\n## Endpoint\n- GET /webhook/course/n8n103/failure-test\n- Authentication: Header Auth (n8n Academy API Key)\n\n## Flow\n1. TriggerWebhook: Receives request and responds immediately\n2. CallFailingEndpoint: Calls guaranteed-failure endpoint and throws\n3. Execution ends in an unhandled error\n4. Linked Error Workflow (Section 2 - Error Handler) runs\n\n## Error Configuration\n- CallFailingEndpoint left on default On Error (Stop Workflow)\n- Error Workflow linked to Section 2 - Error Handler\n\n## Requirements\n- Must be published for production execution\n- Must have Error Workflow configured in settings\n\nPart of: n8n Foundations Program, N8N103 Course, Section 2",
+        "height": 800,
+        "width": 672,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        -640
+      ],
+      "id": "a6b0991f-8ef7-4fec-83ed-a2d6a082b997",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "TriggerWebhook": {
+      "main": [
+        [
+          {
+            "node": "CallFailingEndpoint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodeGroups": [],
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "g3xCqBMSJFqLZ6Mj",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": [
+    {
+      "id": "FSihit6uED7d7P6Z",
+      "name": "n8n103",
+      "createdAt": "2026-11-14T08:06:28.904Z",
+      "updatedAt": "2026-11-14T08:06:28.904Z"
+    }
+  ],
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "Zeyv2YYDd8WmqfLk",
+      "projectId": "lYKvtadRl3YmmyVi",
+      "createdAt": "2026-11-16T18:40:49.706Z",
+      "updatedAt": "2026-11-16T18:40:49.706Z"
+    }
+  ],
+  "activeVersion": {
+    "versionId": "fad10cbb-ec42-4a16-bc91-4ca004ae194c",
+    "workflowId": "Zeyv2YYDd8WmqfLk",
+    "nodes": [
+      {
+        "parameters": {
+          "path": "course/n8n103/failure-test",
+          "authentication": "headerAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "26a1f7a2-07c4-453d-96e6-f0b98c6cd28e",
+        "name": "TriggerWebhook",
+        "webhookId": "2208c8ed-f06a-489b-90cc-721f53ff0a14",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "DYhWrYzLozavqgS5",
+            "name": "n8n Academy API Key"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "https://learn.app.n8n.cloud/webhook/course/n8n103/guaranteed-failure",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": " X-Assessment-ID",
+                "value": "fb0c336524757573f38b3960fa32c9e8"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          224,
+          0
+        ],
+        "id": "6a8260c6-8357-4883-b3de-1d4ac03a694a",
+        "name": "CallFailingEndpoint",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "DYhWrYzLozavqgS5",
+            "name": "n8n Academy API Key"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "TriggerWebhook": {
+        "main": [
+          [
+            {
+              "node": "CallFailingEndpoint",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Clifford Trap",
+    "name": "Version fad10cbb",
+    "description": "",
+    "autosaved": false,
+    "createdAt": "2026-11-16T18:44:33.800Z",
+    "updatedAt": "2026-11-16T18:47:23.000Z"
+  }
+}
