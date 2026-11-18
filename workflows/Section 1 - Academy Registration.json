@@ -1,0 +1,102 @@
+{
+  "id": "HiKKpuYvvv15BPye",
+  "name": "Section 1 - Academy Registration",
+  "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-11-03T23:22:05.732Z",
+  "updatedAt": "2026-11-03T23:32:55.928Z",
+  "isArchived": false,
+  "versionId": "2dbd79a4-e2e3-4dfc-b81b-1463e45cd202",
+  "triggerCount": 0,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9fede676-399d-464b-b558-896458750f15",
+      "name": "TriggerManual "
+    },
+    {
+      "parameters": {
+        "url": "https://learn.app.n8n.cloud/webhook/course/foundations/register",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "assessment_id",
+              "value": "fb0c336524757573f38b3960fa32c9e8"
+            },
+            {
+              "name": "workflow_name",
+              "value": "Section 1 - Academy Registration"
+            },
+            {
+              "name": "tag",
+              "value": "foundations-course"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "1082b72e-690d-4011-b88e-056c2540744a",
+      "name": "SubmitRegistration",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YfR1BrxuXvjxkCPS",
+          "name": "n8n Academy API Key"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "TriggerManual ": {
+      "main": [
+        [
+          {
+            "node": "SubmitRegistration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodeGroups": [],
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "pinData": {},
+  "meta": null,
+  "tags": [
+    {
+      "id": "kG96bePRNTIMw7js",
+      "name": "n8n101",
+      "createdAt": "2026-11-03T21:39:56.436Z",
+      "updatedAt": "2026-11-03T21:39:56.436Z"
+    }
+  ],
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "HiKKpuYvvv15BPye",
+      "projectId": "lYKvtadRl3YmmyVi",
+      "createdAt": "2026-11-03T23:22:05.732Z",
+      "updatedAt": "2026-11-03T23:22:05.732Z"
+    }
+  ],
+  "activeVersion": null
+}
