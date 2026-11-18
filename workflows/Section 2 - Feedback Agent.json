@@ -1,0 +1,307 @@
+{
+  "id": "VKNllBd0Aeks6k5y",
+  "name": "Section 2 - Feedback Agent",
+  "active": false,
+  "activeVersionId": null,
+  "createdAt": "2026-11-14T19:26:37.949Z",
+  "updatedAt": "2026-11-15T23:31:28.966Z",
+  "isArchived": false,
+  "versionId": "4a986862-5151-4828-a683-42aa96e23885",
+  "triggerCount": 0,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "735053eb-e686-4675-86a9-783d423e6ef3",
+      "name": "TriggerChat",
+      "webhookId": "90ad21b5-3955-46d5-83fd-7f37b63d8ee7"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a customer service assistant for a software company. You help customers with their questions about orders, products, and account information. You are the only source of support.\n\nYou have access to tools that can look up information. Use them when a customer asks about:\n- Order status or order history\n- Product information or features\n- Customer account details\n\nAlways be helpful and professional. If you cannot find the information needed, let the customer know and offer to connect them with a human agent. \n\nWhen a tool requires a parameter ask the customer for it. Do not expose any tools you use to the customer."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "b4fb6713-de44-4072-a834-6a94d871863e",
+      "name": "FeedbackAgent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        232,
+        232
+      ],
+      "id": "fbad4653-235d-4f4f-a1d4-c1a1e2f5e41c",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "bn7D9VIVdkLSb68q",
+          "name": "Groq API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Look up the status of a customer's order. Use this when a customer asks about their order, delivery, or shipment status. Requires the order_id.",
+        "url": "https://learn.app.n8n.cloud/webhook/course/n8n103/tools/order-status",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "order_id",
+              "value": "={{ $fromAI('order_id', 'Order ID', 'string') }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Assessment-ID",
+              "value": "fb0c336524757573f38b3960fa32c9e8"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        488,
+        232
+      ],
+      "id": "f4aa5e30-434a-409d-a92b-4f5a143c1dff",
+      "name": "ToolGetOrderStatus",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YfR1BrxuXvjxkCPS",
+          "name": "n8n Academy API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Look up customer account information including their subscription plan, subscription status, and contact details. Use this when a customer asks about their account or subscription. Requires customer_id.",
+        "url": "https://learn.app.n8n.cloud/webhook/course/n8n103/tools/customer-info",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": " customer_id",
+              "value": "={{ $fromAI('customer_id', 'Customer ID', 'string') }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Assessment-ID",
+              "value": "fb0c336524757573f38b3960fa32c9e8"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        616,
+        232
+      ],
+      "id": "f22e087d-a1fc-46af-958a-efa3e11cfe72",
+      "name": "ToolGetCustomerInfo",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "DYhWrYzLozavqgS5",
+          "name": "n8n Academy API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": " Look up information about a product including features, pricing, and specifications. Use this when a customer asks about product details or wants to compare options.",
+        "url": "https://learn.app.n8n.cloud/webhook/course/n8n103/tools/product-info",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "product_name",
+              "value": "={{ $fromAI('product_name', 'Product Name', 'string') }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": " X-Assessment-ID",
+              "value": "fb0c336524757573f38b3960fa32c9e8"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        744,
+        232
+      ],
+      "id": "659e4579-7e95-4112-885b-d655005e4fa9",
+      "name": "ToolGetProductInfo",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "DYhWrYzLozavqgS5",
+          "name": "n8n Academy API Key"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        360,
+        232
+      ],
+      "id": "474f2d45-08b8-4027-a6bd-1a7622e08861",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "content": "# Customer Service Agent\n\nOwned By: Adumuah clifford\nLast Updated: 15/11/26\n\nAn AI agent that answers customer questions by looking up \ninformation from multiple data sources.\n\n## Tools Available\n- Order Status: Look up order/delivery status by customer_id\n- Customer Info: Look up account/subscription details by customer_id\n- Product Info: Look up product features/pricing by product_name\n\n## Model\n- llama-3.3-70b-versatile\n\n## Usage\nChat with the agent via the Chat Trigger. Provide a customer ID \nwhen asking about orders or accounts.\n\nExample prompts:\n- \"I'm customer CUST-042. What's my order status?\"\n- \"What subscription is CUST-108 on?\"\n- \"Tell me about the Enterprise License\"\n\nPart of: n8n Foundations Program, N8N103 Course, Section 1",
+        "height": 576,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        48
+      ],
+      "id": "47ea256a-e4ef-4b56-9a96-3fbd5488aa0c",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "TriggerChat": {
+      "main": [
+        [
+          {
+            "node": "FeedbackAgent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "FeedbackAgent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ToolGetOrderStatus": {
+      "ai_tool": [
+        [
+          {
+            "node": "FeedbackAgent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ToolGetCustomerInfo": {
+      "ai_tool": [
+        [
+          {
+            "node": "FeedbackAgent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ToolGetProductInfo": {
+      "ai_tool": [
+        [
+          {
+            "node": "FeedbackAgent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "FeedbackAgent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodeGroups": [],
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": [
+    {
+      "id": "FSihit6uED7d7P6Z",
+      "name": "n8n103",
+      "createdAt": "2026-11-14T08:06:28.904Z",
+      "updatedAt": "2026-11-14T08:06:28.904Z"
+    }
+  ],
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "VKNllBd0Aeks6k5y",
+      "projectId": "lYKvtadRl3YmmyVi",
+      "createdAt": "2026-11-14T19:26:37.949Z",
+      "updatedAt": "2026-11-14T19:26:37.949Z"
+    }
+  ],
+  "activeVersion": null
+}
