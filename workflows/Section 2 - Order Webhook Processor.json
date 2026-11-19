@@ -559,5 +559,6 @@
     "autosaved": true,
     "createdAt": "2026-11-12T23:34:44.427Z",
     "updatedAt": "2026-11-12T23:34:59.000Z"
-  }
+  },
+  "error": "Your request is invalid or could not be processed by the service"
 }
