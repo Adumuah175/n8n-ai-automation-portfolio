@@ -1,0 +1,577 @@
+{
+  "id": "fLB6jsIMPoqvUa7Q",
+  "name": "Project 1 - Multi-Agent Research & Content Pipeline",
+  "active": true,
+  "activeVersionId": "d10e58b3-057c-4a2a-8642-a483f9b3cb31",
+  "createdAt": "2026-11-18T21:03:25.697Z",
+  "updatedAt": "2026-11-19T00:53:19.074Z",
+  "isArchived": false,
+  "versionId": "d10e58b3-057c-4a2a-8642-a483f9b3cb31",
+  "triggerCount": 1,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "44d21222-7523-4e0c-9d2b-91d5089b512d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "=https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "0a706451-dd1d-4403-b701-23141929ddf5",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "maxItems": 3
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "401f17bc-0e2c-4a86-8f98-fa25ec5ec43c",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze this AI news article and extract: 1) Core Innovation, 2) Technical Stack/Models mentioned, and 3) Business Impact. Title: {{ $json.title }} | Summary: {{ $json.contentSnippet }}",
+        "options": {
+          "systemMessage": "You a You are a senior AI research analyst. Be concise, factual, and strictly use bullet points. Do not invent details outside the provided text.re a helpful assistant"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        672,
+        0
+      ],
+      "id": "c65b67d7-4f6e-4104-966c-80562453e15c",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        744,
+        232
+      ],
+      "id": "e6596ff4-544e-4b58-afa4-12aa850816ae",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "bn7D9VIVdkLSb68q",
+          "name": "Groq API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Turn this technical research brief into a punchy LinkedIn post for AI builders and founders with a bold hook, 3 concise takeaways, and a closing question. Research Brief: {{ $json.output }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1024,
+        0
+      ],
+      "id": "06a2bebf-1c5a-4a35-8f1a-b697dd750c84",
+      "name": "Content Strategist"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1096,
+        232
+      ],
+      "id": "321feed9-343c-44db-9d94-f238278778f1",
+      "name": "Groq Chat Model2",
+      "credentials": {
+        "groqApi": {
+          "id": "bn7D9VIVdkLSb68q",
+          "name": "Groq API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "output"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        0
+      ],
+      "id": "5c500c5b-54ca-47aa-b47a-7edcf6adc3e4",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "Adumuah175",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-ai-automation-portfolio",
+          "mode": "list",
+          "cachedResultName": "n8n-ai-automation-portfolio",
+          "cachedResultUrl": "https://github.com/Adumuah175/n8n-ai-automation-portfolio"
+        },
+        "filePath": "=digests/ai-research-{{ $now.format('yyyy-MM-dd_HH-mm') }}.md",
+        "fileContent": "=# Daily AI Research & LinkedIn Content Digest ({{ $now.format('yyyy-MM-dd') }})  {{ $json.output.join('\\n\\n---\\n\\n') }}",
+        "commitMessage": "=Add AI research digest for {{ $now.format('yyyy-MM-dd') }}"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1600,
+        0
+      ],
+      "id": "312dba5f-47c6-41d9-af2d-b183b505a4b1",
+      "name": "Create a file",
+      "webhookId": "d99b5a32-4276-427a-84da-1d95ff2ccfe9",
+      "credentials": {
+        "githubApi": {
+          "id": "A4qP8thwvEku8UM9",
+          "name": "GitHub account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Content Strategist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Content Strategist",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Create a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Strategist": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodeGroups": [],
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": [],
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "fLB6jsIMPoqvUa7Q",
+      "projectId": "lYKvtadRl3YmmyVi",
+      "createdAt": "2026-11-18T21:03:25.711Z",
+      "updatedAt": "2026-11-18T21:03:25.711Z"
+    }
+  ],
+  "activeVersion": {
+    "versionId": "d10e58b3-057c-4a2a-8642-a483f9b3cb31",
+    "workflowId": "fLB6jsIMPoqvUa7Q",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {}
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.4,
+        "position": [
+          0,
+          0
+        ],
+        "id": "44d21222-7523-4e0c-9d2b-91d5089b512d",
+        "name": "Schedule Trigger"
+      },
+      {
+        "parameters": {
+          "url": "=https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.rssFeedRead",
+        "typeVersion": 1.2,
+        "position": [
+          224,
+          0
+        ],
+        "id": "0a706451-dd1d-4403-b701-23141929ddf5",
+        "name": "RSS Read"
+      },
+      {
+        "parameters": {
+          "maxItems": 3
+        },
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          448,
+          0
+        ],
+        "id": "401f17bc-0e2c-4a86-8f98-fa25ec5ec43c",
+        "name": "Limit"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Analyze this AI news article and extract: 1) Core Innovation, 2) Technical Stack/Models mentioned, and 3) Business Impact. Title: {{ $json.title }} | Summary: {{ $json.contentSnippet }}",
+          "options": {
+            "systemMessage": "You a You are a senior AI research analyst. Be concise, factual, and strictly use bullet points. Do not invent details outside the provided text.re a helpful assistant"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          672,
+          0
+        ],
+        "id": "c65b67d7-4f6e-4104-966c-80562453e15c",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": "openai/gpt-oss-120b",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+        "typeVersion": 1,
+        "position": [
+          744,
+          232
+        ],
+        "id": "e6596ff4-544e-4b58-afa4-12aa850816ae",
+        "name": "Groq Chat Model",
+        "credentials": {
+          "groqApi": {
+            "id": "bn7D9VIVdkLSb68q",
+            "name": "Groq API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Turn this technical research brief into a punchy LinkedIn post for AI builders and founders with a bold hook, 3 concise takeaways, and a closing question. Research Brief: {{ $json.output }}",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          1024,
+          0
+        ],
+        "id": "06a2bebf-1c5a-4a35-8f1a-b697dd750c84",
+        "name": "Content Strategist"
+      },
+      {
+        "parameters": {
+          "model": "openai/gpt-oss-120b",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+        "typeVersion": 1,
+        "position": [
+          1096,
+          232
+        ],
+        "id": "321feed9-343c-44db-9d94-f238278778f1",
+        "name": "Groq Chat Model2",
+        "credentials": {
+          "groqApi": {
+            "id": "bn7D9VIVdkLSb68q",
+            "name": "Groq API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fieldsToAggregate": {
+            "fieldToAggregate": [
+              {
+                "fieldToAggregate": "output"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          1376,
+          0
+        ],
+        "id": "5c500c5b-54ca-47aa-b47a-7edcf6adc3e4",
+        "name": "Aggregate"
+      },
+      {
+        "parameters": {
+          "resource": "file",
+          "owner": {
+            "__rl": true,
+            "value": "Adumuah175",
+            "mode": "name"
+          },
+          "repository": {
+            "__rl": true,
+            "value": "n8n-ai-automation-portfolio",
+            "mode": "list",
+            "cachedResultName": "n8n-ai-automation-portfolio",
+            "cachedResultUrl": "https://github.com/Adumuah175/n8n-ai-automation-portfolio"
+          },
+          "filePath": "=digests/ai-research-{{ $now.format('yyyy-MM-dd_HH-mm') }}.md",
+          "fileContent": "=# Daily AI Research & LinkedIn Content Digest ({{ $now.format('yyyy-MM-dd') }})  {{ $json.output.join('\\n\\n---\\n\\n') }}",
+          "commitMessage": "=Add AI research digest for {{ $now.format('yyyy-MM-dd') }}"
+        },
+        "type": "n8n-nodes-base.github",
+        "typeVersion": 1.1,
+        "position": [
+          1600,
+          0
+        ],
+        "id": "312dba5f-47c6-41d9-af2d-b183b505a4b1",
+        "name": "Create a file",
+        "webhookId": "d99b5a32-4276-427a-84da-1d95ff2ccfe9",
+        "credentials": {
+          "githubApi": {
+            "id": "A4qP8thwvEku8UM9",
+            "name": "GitHub account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "RSS Read",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "RSS Read": {
+        "main": [
+          [
+            {
+              "node": "Limit",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Groq Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Content Strategist",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Groq Chat Model2": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Content Strategist",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate": {
+        "main": [
+          [
+            {
+              "node": "Create a file",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Content Strategist": {
+        "main": [
+          [
+            {
+              "node": "Aggregate",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Clifford Trap",
+    "name": "Version d10e58b3",
+    "description": "",
+    "autosaved": true,
+    "createdAt": "2026-11-19T00:53:17.957Z",
+    "updatedAt": "2026-11-19T00:53:26.000Z"
+  }
+}
