@@ -1,13 +1,13 @@
 {
   "id": "nyD094kQmXAoqLqB",
   "name": "GitHub Auto-Backup",
-  "active": false,
-  "activeVersionId": null,
+  "active": true,
+  "activeVersionId": "bf840c92-48d4-418c-b4b3-1cea84d28a49",
   "createdAt": "2026-11-18T20:50:05.235Z",
-  "updatedAt": "2026-11-18T20:54:44.463Z",
+  "updatedAt": "2026-11-19T01:06:01.111Z",
   "isArchived": false,
-  "versionId": "46d1ddf3-9f9e-4311-8e60-91c7e876b4bf",
-  "triggerCount": 0,
+  "versionId": "4466aaf4-3104-4253-97e9-cb67976dc799",
+  "triggerCount": 1,
   "nodes": [
     {
       "parameters": {
@@ -47,6 +47,76 @@
           "name": "n8n account"
         }
       }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "Adumuah175",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-ai-automation-portfolio",
+          "mode": "name"
+        },
+        "filePath": "=workflows/{{ $json.name }}.json",
+        "fileContent": "={{ JSON.stringify($json, null, 2) }}",
+        "commitMessage": "=Backup workflow: {{ $json.name }}"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "0ea2f041-e9da-4a81-8f34-0ec7a29281e4",
+      "name": "Create a file",
+      "webhookId": "c3d8c586-8a24-407e-99ba-f1deb34d125b",
+      "credentials": {
+        "githubApi": {
+          "id": "A4qP8thwvEku8UM9",
+          "name": "GitHub account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "edit",
+        "owner": {
+          "__rl": true,
+          "value": "Adumuah175",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-ai-automation-portfolio",
+          "mode": "list",
+          "cachedResultName": "n8n-ai-automation-portfolio",
+          "cachedResultUrl": "https://github.com/Adumuah175/n8n-ai-automation-portfolio"
+        },
+        "filePath": "=workflows/{{ $json.name }}.json",
+        "fileContent": "={{ JSON.stringify($json, null, 2) }}",
+        "commitMessage": "=Update workflow: {{ $json.name }}"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        96
+      ],
+      "id": "e82a8254-b629-47b9-b4f9-6cc70bb9d496",
+      "name": "Edit a file",
+      "webhookId": "78515470-3205-43c6-b11f-9a936e14aec5",
+      "credentials": {
+        "githubApi": {
+          "id": "A4qP8thwvEku8UM9",
+          "name": "GitHub account"
+        }
+      }
     }
   ],
   "connections": {
@@ -60,6 +130,29 @@
           }
         ]
       ]
+    },
+    "Get many workflows": {
+      "main": [
+        [
+          {
+            "node": "Create a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a file": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "nodeGroups": [],
@@ -67,7 +160,16 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "staticData": null,
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
+    }
+  },
   "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true
@@ -82,5 +184,114 @@
       "updatedAt": "2026-11-18T20:50:05.241Z"
     }
   ],
-  "activeVersion": null
+  "activeVersion": {
+    "versionId": "bf840c92-48d4-418c-b4b3-1cea84d28a49",
+    "workflowId": "nyD094kQmXAoqLqB",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtMinute": 5
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.4,
+        "position": [
+          0,
+          0
+        ],
+        "id": "a081b4f6-2961-40e7-9194-c99f7b1382ed",
+        "name": "Schedule Trigger"
+      },
+      {
+        "parameters": {
+          "filters": {},
+          "requestOptions": {}
+        },
+        "type": "n8n-nodes-base.n8n",
+        "typeVersion": 1,
+        "position": [
+          224,
+          0
+        ],
+        "id": "5ebbe24d-64cf-4a1a-87dd-06013ae5c76d",
+        "name": "Get many workflows",
+        "credentials": {
+          "n8nApi": {
+            "id": "rGcQlUjmDKI44LTa",
+            "name": "n8n account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "file",
+          "owner": {
+            "__rl": true,
+            "value": "Adumuah175",
+            "mode": "name"
+          },
+          "repository": {
+            "__rl": true,
+            "value": "n8n-ai-automation-portfolio",
+            "mode": "name"
+          },
+          "filePath": "=workflows/{{ $json.name }}.json",
+          "fileContent": "={{ JSON.stringify($json, null, 2) }}",
+          "commitMessage": "=Backup workflow: {{ $json.name }}"
+        },
+        "type": "n8n-nodes-base.github",
+        "typeVersion": 1.1,
+        "position": [
+          448,
+          0
+        ],
+        "id": "0ea2f041-e9da-4a81-8f34-0ec7a29281e4",
+        "name": "Create a file",
+        "webhookId": "c3d8c586-8a24-407e-99ba-f1deb34d125b",
+        "credentials": {
+          "githubApi": {
+            "id": "A4qP8thwvEku8UM9",
+            "name": "GitHub account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Get many workflows",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get many workflows": {
+        "main": [
+          [
+            {
+              "node": "Create a file",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Clifford Trap",
+    "name": "Version bf840c92",
+    "description": "",
+    "autosaved": true,
+    "createdAt": "2026-11-18T21:00:53.667Z",
+    "updatedAt": "2026-11-18T21:02:49.000Z"
+  },
+  "error": "Your request is invalid or could not be processed by the service"
 }
