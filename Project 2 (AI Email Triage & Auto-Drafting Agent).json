@@ -1,0 +1,256 @@
+{
+  "name": "Project 2 (AI Email Triage & Auto-Drafting Agent)",
+  "nodes": [
+    {
+      "parameters": {
+        "postProcessAction": "nothing",
+        "options": {
+          "customEmailConfig": "[\"UNSEEN\"]"
+        }
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        -192
+      ],
+      "id": "9ae6c0f7-a841-46f6-ae62-6899dd6e0e14",
+      "name": "Email Trigger (IMAP)",
+      "credentials": {
+        "imap": {
+          "id": "hpZi8jI2lUmso1YP",
+          "name": "IMAP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "keep": "lastItems"
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        224,
+        -192
+      ],
+      "id": "5fef7ac7-fa81-4163-92d5-0be196b9d6d8",
+      "name": "limit "
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.item.json;\n\n// 1. Prefer textPlain; fallback to stripping tags from textHtml\nlet rawBody = item.textPlain || '';\nif (!rawBody && item.textHtml) {\n  rawBody = item.textHtml\n    .replace(/<style[^>]*>[\\s\\S]*?<\\/style>/gi, '')\n    .replace(/<[^>]+>/g, ' ');\n}\n\n// 2. Strip quoted reply history, excessive whitespace, and long tracking URLs\nconst cleanBody = rawBody\n  .split(/\\r?\\nOn .+ wrote:/)[0]          // Cut off quoted reply thread\n  .replace(/https?:\\/\\/\\S{80,}/g, '[link]') // Replace long tracking URLs\n  .replace(/\\s+/g, ' ')\n  .trim()\n  .slice(0, 2500);\n\nreturn {\n  json: {\n    messageId: item.messageId || item.id || '',\n    date: item.date || '',\n    from: item.from || '',\n    subject: item.subject || '(No Subject)',\n    cleanBody\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        -192
+      ],
+      "id": "a13fdd16-4f53-4418-ac51-f8fcd9d81694",
+      "name": "Normalize Email"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze and triage this incoming email:\n\nFrom: {{ $json.from }}\nDate: {{ $json.date }}\nSubject: {{ $json.subject }}\nBody:\n{{ $json.cleanBody }}",
+        "options": {
+          "systemMessage": "You are an executive email triage and drafting assistant. Analyze the incoming email and return ONLY structured JSON matching the schema.\n\nClassification rules:\n- category: one of [\"urgent_action\", \"opportunity_lead\", \"client_project\", \"notification_social\", \"newsletter_promo\", \"spam\"]\n- priority: \"high\" (deadlines, direct human inquiries, opportunities), \"medium\" (routine follow-ups, standard updates), or \"low\" (automated notifications, social alerts, newsletters, noreply senders).\n- requires_reply: true ONLY when a real human or business expects a direct response. Set false for automated alerts, noreply addresses, LinkedIn notifications, and newsletters.\n- summary: concise 1-2 sentence summary of the email.\n- draft_reply: if requires_reply is true, write a polite, clear, professional reply ready for human review (no placeholder brackets unless strictly necessary). If requires_reply is false, return null.   \n\nReturn the flat JSON object directly with top-level keys: category, priority, requires_reply, summary, draft_reply. Do NOT wrap the JSON inside an \"output\" object"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        672,
+        -192
+      ],
+      "id": "be428565-61ea-4d6f-96c2-9af2a2d93a28",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        744,
+        40
+      ],
+      "id": "6f575ffe-b22d-4332-ac22-ec9d18981f1a",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "dFZN0A73lPqIrMOR",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "d62750e5-c03d-49d7-b555-88b676241da5",
+              "leftValue": "={{ $json.output.requires_reply }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        1248,
+        -192
+      ],
+      "id": "63f58b1c-6759-4913-94fd-1b34dcd0b1dd",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $('Normalize Email').item.json.subject.replace(/^Re:\\s*/i, '') }}",
+        "message": "={{ $('Parse AI JSON').item.json.output.draft_reply }}",
+        "options": {
+          "sendTo": "={{ $('Normalize Email').item.json.from.match(/<(.+)>/)?.[1] || $('Normalize Email').item.json.from }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1488,
+        -272
+      ],
+      "id": "27ac9ccc-5441-41e9-a449-bdfc50409ded",
+      "name": "Create a draft",
+      "webhookId": "5594efd9-ac89-4202-b5cb-eb28257cf646",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "sKZf71wea3raIVXP",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.output || '';\nconst cleaned = raw.replace(/```json\\s*|```/g, '').trim();\nconst parsed = JSON.parse(cleaned);\nreturn [{ json: { output: parsed.output ? parsed.output : parsed } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        -192
+      ],
+      "id": "8820109b-79d8-4d59-a62f-86a92da6d8b2",
+      "name": "Parse AI JSON"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Email Trigger (IMAP)": {
+      "main": [
+        [
+          {
+            "node": "limit ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "limit ": {
+      "main": [
+        [
+          {
+            "node": "Normalize Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Email": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Parse AI JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create a draft",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Parse AI JSON": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "d18d4c67-f83d-4809-a497-be3e71370af5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d095963e43af3649da14560e2efb9b5150cba11ee215307e25cae8c72a976fb0"
+  },
+  "nodeGroups": [],
+  "id": "NzD2Di1nWNODNnQH",
+  "tags": []
+}
